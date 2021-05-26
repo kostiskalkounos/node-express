@@ -21,6 +21,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     imageUrl: imageUrl,
     description: description,
+    userId: req.user, // mongoose will pick just the user id from the entire object
   });
 
   product
@@ -86,6 +87,8 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+    //.select("title price -_id")
+    //.populate("userId", "name")
     .then((products) => {
       res.render("admin/products", {
         prods: products,
