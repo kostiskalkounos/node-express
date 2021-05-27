@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+
 const User = require("./models/user");
 
 const adminRoutes = require("./routes/admin");
@@ -9,7 +11,14 @@ const authRoutes = require("./routes/auth");
 const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
 
+const MONGODB_URI =
+  "mongodb+srv://kostis:kostis@cluster0.xomaa.mongodb.net/shop?retryWrites=true&w=majority";
+
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs"); // Register template engine
 app.set("views", "views"); // Not needed, the default path is already '/views'
@@ -18,7 +27,13 @@ app.set("views", "views"); // Not needed, the default path is already '/views'
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
-  session({ secret: "my secret", resave: false, saveUninitialized: false })
+  // It automatically sets a cookie
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
 );
 
 // Store User into a request to use them anywhere in the app
@@ -40,9 +55,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://kostis:kostis@cluster0.xomaa.mongodb.net/shop?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     User.findOne().then((user) => {
       if (!user) {
