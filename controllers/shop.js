@@ -93,7 +93,7 @@ exports.postOrder = (req, res, next) => {
     .execPopulate() // because populate doesn't return a promise
     .then((user) => {
       const products = user.cart.items.map((item) => {
-        return { product: item.productId, quantity: item.quantity };
+        return { product: { ...item.productId_doc }, quantity: item.quantity };
       });
       const order = new Order({
         user: {
