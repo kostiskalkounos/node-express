@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
+const session = require("express-session");
 const User = require("./models/user");
 
 const adminRoutes = require("./routes/admin");
@@ -16,6 +17,9 @@ app.set("views", "views"); // Not needed, the default path is already '/views'
 // Middleware is triggered by incoming requests
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({ secret: "my secret", resave: false, saveUninitialized: false })
+);
 
 // Store User into a request to use them anywhere in the app
 app.use((req, res, next) => {
