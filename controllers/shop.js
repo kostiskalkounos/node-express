@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Order = require("../models/order");
 
 exports.getProducts = (req, res, next) => {
   // /views/shop/product-list.ejs
@@ -86,10 +87,23 @@ exports.postCartDeleteProduct = (req, res, next) => {
     });
 };
 
-exports.postOder = (req, res, next) => {
-  let fetchedCart;
+exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+    .populate("cart.items.productId")
+    .execPopulate() // because populate doesn't return a promise
+    .then((user) => {
+      const products = user.cart.items.map((item) => {
+        return { product: item.productId, quantity: item.quantity };
+      });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user, // mongoose extracts only the id here
+        },
+        products: products,
+      });
+      return order.save();
+    })
     .then(() => {
       res.redirect("/orders");
     })
