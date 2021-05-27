@@ -1,7 +1,9 @@
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
-  // render template
+  if (!req.session.isLoggedIn) {
+    return res.redirect("/login");
+  }
   // refers to /views/edit-product.ejs
   res.render("admin/edit-product", {
     // pass these variables into the templates
