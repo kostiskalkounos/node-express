@@ -28,6 +28,7 @@
                                     <!-- do this to access the product id in postDeleteProduct in controllers/admin,
                                         POST stores the data in body of the request -->
                                         <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button class="btn" type="submit">Delete</button>
                                     </form>
 

@@ -55,6 +55,13 @@ app.use((req, res, next) => {
     });
 });
 
+app.use((req, res, next) => {
+  // For every request that is sent, these fields will be executed for the views that are rendered
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
