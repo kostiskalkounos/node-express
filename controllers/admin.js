@@ -22,7 +22,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     imageUrl: imageUrl,
     description: description,
-    userId: req.session.user, // mongoose will pick just the user id from the entire object
+    userId: req.user, // mongoose will pick just the user id from the entire object
   });
 
   product
