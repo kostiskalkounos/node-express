@@ -79,7 +79,6 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmedPassword = req.body.confirmedPassword;
   const errors = validationResult(req); // store the errors gathered in /routes/auth
 
   if (!errors.isEmpty()) {
