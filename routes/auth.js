@@ -16,10 +16,14 @@ router.get("/reset/:token", authController.getNewPassword);
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Please enter a valid email address!"),
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email address!")
+      .normalizeEmail(),
     body("password", "The password has to be valid!")
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
   ],
   authController.postLogin
 );
@@ -35,19 +39,23 @@ router.post(
         if (userDoc) {
           return Promise.reject("E-mail already exists.");
         }
-      }),
+      })
+      .normalizeEmail(),
     body(
       "password",
       "Please enter a password with only numbers and letters and it should be at least 5 characters long."
     )
       .isLength({ min: 5 })
-      .isAlphanumeric(),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("The passwords do not match!");
-      }
-      return true;
-    }),
+      .isAlphanumeric()
+      .trim(),
+    body("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("The passwords do not match!");
+        }
+        return true;
+      }),
   ],
   authController.postSignup
 );
