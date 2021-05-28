@@ -24,12 +24,21 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "images");
+  },
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + "-" + file.originalname);
+  },
+});
+
 app.set("view engine", "ejs"); // Register template engine
 app.set("views", "views"); // Not needed, the default path is already '/views'
 
 // Middleware is triggered by incoming requests
 app.use(express.urlencoded({ extended: false }));
-app.use(multer({ dest: "images" }).single("image"));
+app.use(multer({ storage: fileStorage }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   // It automatically sets a cookie
