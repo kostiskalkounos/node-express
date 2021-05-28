@@ -15,7 +15,11 @@ router.get("/reset/:token", authController.getNewPassword);
 router.post("/login", authController.postLogin);
 
 // store the errors in an object
-router.post("/signup", check("email").isEmail(), authController.postSignup);
+router.post(
+  "/signup",
+  check("email").isEmail().withMessage("Please enter a valid email."),
+  authController.postSignup
+);
 
 router.post("/logout", authController.postLogout);
 
