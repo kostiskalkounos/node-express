@@ -49,11 +49,14 @@ app.use((req, res, next) => {
 
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
       req.user = user; // mongoose object which persists across requests cause it holds data from the session
       next();
     })
     .catch((err) => {
-      console.log(err);
+      throw new Error(err);
     });
 });
 
@@ -67,6 +70,8 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+
+app.use("/500", errorController.get500);
 app.use(errorController.get404);
 
 mongoose
