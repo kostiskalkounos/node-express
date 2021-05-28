@@ -138,8 +138,11 @@ exports.postEditProduct = (req, res, next) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect("/");
       }
+
       product.title = updatedTitle;
       product.price = updatedPrice;
+      product.description = updatedDescription;
+
       if (image) {
         fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;

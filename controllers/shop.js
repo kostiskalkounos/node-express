@@ -83,6 +83,11 @@ exports.postCart = (req, res, next) => {
     .then((result) => {
       console.log(result);
       res.redirect("/cart");
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -106,7 +111,7 @@ exports.postOrder = (req, res, next) => {
     .execPopulate() // because populate doesn't return a promise
     .then((user) => {
       const products = user.cart.items.map((item) => {
-        return { product: { ...item.productId_doc }, quantity: item.quantity };
+        return { quantity: item.quantity, product: { ...item.productId._doc } };
       });
       const order = new Order({
         user: {
