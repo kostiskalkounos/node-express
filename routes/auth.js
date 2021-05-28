@@ -17,7 +17,15 @@ router.post("/login", authController.postLogin);
 // store the errors in an object
 router.post(
   "/signup",
-  check("email").isEmail().withMessage("Please enter a valid email."),
+  check("email")
+    .isEmail()
+    .withMessage("Please enter a valid email.")
+    .custom((value, { req }) => {
+      if (value === "test@test.com") {
+        throw new Error("This email address is fobidden.");
+      }
+      return true;
+    }),
   authController.postSignup
 );
 
