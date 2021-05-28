@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { validationResult } = require("express-validator/check");
 const User = require("../models/user");
 
 var transporter = nodemailer.createTransport({
@@ -79,6 +80,16 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmedPassword = req.body.confirmedPassword;
+  const errors = validationResult(req); // store the errors gathered in /routes/auth
+
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render("auth/signup", {
+      pageTitle: "Signup",
+      path: "/signup",
+      errorMessage: errors.array(),
+    });
+  }
 
   User.findOne({ email: email })
     .then((userDoc) => {
