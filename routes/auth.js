@@ -13,9 +13,17 @@ router.get("/reset", authController.getReset);
 
 router.get("/reset/:token", authController.getNewPassword);
 
-router.post("/login", authController.postLogin);
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Please enter a valid email address!"),
+    body("password", "The password has to be valid!")
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+  ],
+  authController.postLogin
+);
 
-// store the errors in an object
 router.post(
   "/signup",
   [
